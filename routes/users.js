@@ -5,7 +5,7 @@ const authyMiddlware = require('../middleware/auth');
 
 const multer = require('multer');
 
-// Needs to be changed for deployment  
+// Needs to be changed for deployment to memory management, then updated to proccess in memory storage.
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/')
