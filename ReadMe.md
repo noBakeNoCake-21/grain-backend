@@ -4,7 +4,6 @@ Grain Backend Application
 REST APIs for Grain. All the routes a user might hit while traversing Grain. Grain Backend has it's own Authentication method for logged in users.  
 
 JWT authentication methods used. 
-
 Connection to clould flare R2 bucket storage for images via CloudFlare API
 Connection to clouldflare Stream to store and stream movies via CloudFlare API. 
 
