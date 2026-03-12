@@ -1,45 +1,57 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router()
 const connect = require('../db/grain_db_connect');
 const authyMiddlware = require('../middleware/auth');
+const upload = require('../middleware/multer.js');
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 
-const multer = require('multer');
+const cloudFlareAccessKeyR = process.env.CLOUDFLARE_R2_ACCESS_KEY;
+const cloudFlareSecretKeyR = process.env.CLOUDFLARE_R2_SECRET_KEY;
+const cloudFlareEndPointR = process.env.CLOUDFLARE_R2_ENDPOINT;
+const cloudFlareBuketR = process.env.CLOUDFLARE_R2_BUCKET;
 
-// Needs to be changed for deployment to memory management, then updated to proccess in memory storage.
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/')
-    },
-    filename: (req, file, cb) => {
-        const cleanName = file.originalname.replace(/\s+/g, '-');
-        cb(null, Date.now() + '_' + file.originalname)
+
+
+const s3 = new S3Client({
+    region: 'auto',
+    endpoint: cloudFlareEndPointR,
+    credentials: {
+        accessKeyId: cloudFlareAccessKeyR,
+        secretAccessKey: cloudFlareSecretKeyR,
     }
 });
 
-const upload = multer({ storage });
 
 //Upload API 
-router.route('/upload').post(authyMiddlware, upload.fields([
-    { name: 'movieFile' },
-    { name: 'posterFile' }
-]), async (req, res) => {
+router.route('/upload').post(authyMiddlware, upload.fields([{ name: 'posterFile' }]), async (req, res) => {
     try {
 
         const userId = req.user.id;
         console.log(userId);
-        const videoFile = req.files.movieFile[0].path;
-        const posterFile = req.files.posterFile[0].path;
-        const { title, description, genre } = req.body;
+        const posterFile = req.files.posterFile[0].buffer;
+        const posterKey = `${Date.now()}_${req.files.posterFile[0].originalname}`;
+
+        const cloudFlare = new PutObjectCommand({
+            Bucket: cloudFlareBuketR,
+            Key: posterKey,
+            Body: posterFile
+        });
+        await s3.send(cloudFlare);
+
+        const posterUrl = `${process.env.CLOUDFLARE_R2_PUBLIC_BUCKET}/${posterKey}`;
+
+        const { title, description, genre, movieFile } = req.body;
 
         const result = await connect.query(
             "INSERT INTO movies (user_id, title, description, video_file, poster_file, genre) VALUES ($1, $2, $3, $4, $5, $6)",
-            [userId, title, description, videoFile, posterFile, genre]
+            [userId, title, description, movieFile, posterUrl, genre]
         );
 
         res.json(result.rows[0]);
     } catch (error) {
         console.log(error)
-        res.status(500).json({ message: 'what the fuck is wrong' });
+        res.status(500).json({ message: 'what is wrong?' });
     }
 });
 
@@ -92,4 +104,4 @@ router.route('/logout').post(authyMiddlware, (req, res) => {
     res.clearCookie('token').json({ message: 'Logged out successfully' });
 });
 
-module.exports = router, upload; 
+module.exports = router; 

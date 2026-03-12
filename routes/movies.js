@@ -2,6 +2,7 @@ const express = require('express');
 let router = express.Router();
 const connect = require('../db/grain_db_connect');
 const authyMiddlware = require('../middleware/auth');
+const upload = require('../middleware/multer');
 
 
 
@@ -53,7 +54,6 @@ router.route('/:id').delete(authyMiddlware, async (req, res) => {
 router.route('/:id').get(async (req, res) => {
     const specificMovie = req.params.id;
     const data = await connect.query("SELECT id, user_id, title, description, video_file, poster_file, genre, uploaded_on FROM movies WHERE id = $1", [specificMovie]);
-    console.log(data);
     res.json(data.rows[0]);
 });
 

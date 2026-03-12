@@ -5,9 +5,10 @@ const movieRouter = require('./routes/movies.js');
 const loginRouter = require('./routes/login.js');
 const signupRouter = require('./routes/signup.js');
 const profileRouter = require('./routes/users.js');
+const streamupload = require('./routes/streamupload.js')
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-
+const PORT = process.env.PORT || 3000;
 
 
 app.use(express.json());
@@ -16,7 +17,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static('uploads')); // take out for deployment 
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://grain-frontend.lakshay-guliani-21.workers.dev/',
     credentials: true
 }));
 
@@ -30,9 +31,9 @@ app.use('/api/signup', signupRouter);
 
 app.use('/api/users', profileRouter);
 
+app.use('/api/users', streamupload);
 
 
 
-app.listen(3000, () => {
-    console.log("Server Up and Running");
-});
+
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
