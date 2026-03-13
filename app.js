@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use('/uploads', express.static('uploads')); // take out for deployment 
 
 app.use(cors({
-    origin: 'https://grain-frontend.lakshay-guliani-21.workers.dev/',
+    origin: 'https://grain-frontend.lakshay-guliani-21.workers.dev',
     credentials: true
 }));
 
