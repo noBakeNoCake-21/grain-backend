@@ -24,7 +24,7 @@ const s3 = new S3Client({
     }
 });
 
-
+// this is for the signup page on the frontend 
 router.route('/').post(upload.fields([{ name: 'profilePic' }]), async (req, res) => {
 
     try {

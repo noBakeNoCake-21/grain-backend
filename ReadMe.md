@@ -15,3 +15,6 @@ and exported out.
 - Create Controller folder and move all controllers to their own respective modules.  
 - Deleting the Movies from stream and database using the user id and movieid, find the movie in clouldflare using uid 
 - Deleting profile pic from r2 
+- Add Rate limiting for APIs 
+- Honey pot field for bots 
+- Add login attempts 

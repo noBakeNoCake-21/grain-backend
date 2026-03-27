@@ -23,7 +23,7 @@ const s3 = new S3Client({
 });
 
 
-//Upload API 
+//Upload API for poster file only 
 router.route('/upload').post(authyMiddlware, upload.fields([{ name: 'posterFile' }]), async (req, res) => {
     try {
 
@@ -55,7 +55,7 @@ router.route('/upload').post(authyMiddlware, upload.fields([{ name: 'posterFile'
     }
 });
 
-//User Profile API 
+//User Profile API / Public no authy needed. 
 router.route('/:id').get(async (req, res) => {
 
     try {
@@ -83,7 +83,7 @@ router.route('/:id').get(async (req, res) => {
 
 });
 
-//Dashboard API 
+//Dashboard API / Delete account Button / Delete the movies and poster and profile pic on cloudflare. 
 router.route('/delete-account').delete(authyMiddlware, async (req, res) => {
 
     try {
@@ -98,7 +98,7 @@ router.route('/delete-account').delete(authyMiddlware, async (req, res) => {
 
 });
 
-
+//Dashboard API / Logout Button on dashboard. 
 router.route('/logout').post(authyMiddlware, (req, res) => {
 
     res.clearCookie('token').json({ message: 'Logged out successfully' });

@@ -16,9 +16,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use('/uploads', express.static('uploads')); // take out for deployment 
 
+const allowedOrigins = [
+    'https://grain-frontend.grainstreaming.workers.dev',
+    'http://127.0.0.1:5173'
+];
+
 app.use(cors({
-    origin: 'https://grain-frontend.grainstreaming.workers.dev/',
-    credentials: true
+    origin: function (origin, callback) {
+
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
 }));
 
 console.log("route hit app");
