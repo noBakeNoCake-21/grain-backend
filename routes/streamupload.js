@@ -7,11 +7,12 @@ const streamToken = process.env.CLOUDFLARE_STREAM_TOKEN;
 
 const router = express.Router();
 const axios = require('axios');
+const { uploadLimit } = require('../middleware/apiLimiter.js')
 
 
 //Upload API for uploading movies to clouldflare
 //This API is sending the frontend a link to upload. The frontend then takes care of uploading. Yeah I know
-router.post('/streamupload', authyMiddlware, async (req, res) => {
+router.post('/streamupload', authyMiddlware, uploadLimit, async (req, res) => {
     try {
         const uploadLength = req.headers['upload-length'];
         const uploadMetadata = req.headers['upload-metadata'];

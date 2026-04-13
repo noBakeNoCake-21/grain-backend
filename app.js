@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const connect = require('./db/grain_db_connect');
 const movieRouter = require('./routes/movies.js');
 const loginRouter = require('./routes/login.js');
 const signupRouter = require('./routes/signup.js');
@@ -8,17 +7,20 @@ const profileRouter = require('./routes/users.js');
 const streamupload = require('./routes/streamupload.js')
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const helmet = require('helmet');
 const PORT = process.env.PORT || 3000;
 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(helmet());
 app.use('/uploads', express.static('uploads')); // take out for deployment 
 
 const allowedOrigins = [
     'https://grain-frontend.grainstreaming.workers.dev',
-    'http://127.0.0.1:5173'
+    'http://127.0.0.1:5173',
+    'http://localhost:5173'
 ];
 
 app.use(cors({
